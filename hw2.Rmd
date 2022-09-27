@@ -1,0 +1,72 @@
+---
+title: "Business Forecasting HW2"
+output: html_notebook
+---
+
+Directions:
+1. Pick a timeseries (TS) from R packages (fpp, fpp2, base to name a few). Make sure the TS has periodicity of Weekly, Monthly, Quarterly.
+2. Describe the TS
+3. Plot the TS and guess what the Acf plot would look like
+4. Do a Acf plot. What insight is the Acf plot providing about your TS.
+5. Forecast using HoltWinters and see what the accuracy is
+
+Tip: Explain why you took the whole TS or part of it for Acf and forecasting.
+
+Submit as the Rmd and html or pdf within your GitHub account.
+
+
+HW - Sriven Sikhinam
+Dataset: "auscafe" at a Monthly periodicity 
+```{r}
+library(fpp2)
+df = auscafe
+print(df)
+```
+This dataset goes under the name of "auscafe" which represents monthly expenditure on restaurants, cafe, and takeaway food services in Australia in terms of ($billion) from April 1982 to September 2017. This is monthly time series of class ts.
+```{r}
+class(df)
+plot(df)
+```
+This is an example of Time Series spread into monthly intervals. There is also a trend in the data set as the price is constantly rising with the time.
+
+I would predict the ACF would show significant signs of a trend as you could see in the time series plot. I believe with the acf plot as lag grows, the output with all parameters will go beyond the blue bars which would show a sign of a trend in the plot.   
+
+```{r}
+acf(df)
+```
+As predicted, the ACF plot shows clear signs of a trend in the time series where as the legs increase, the values slowly decrease. This confirms the our dataset forms a type of time series which is Trend time series. 
+
+
+Now looking into the residual analysis 
+```{r}
+#Holtwinters Model
+tmp = HoltWinters(df)
+attributes(tmp)
+plot(tmp)
+```
+Using Holtwinters Model, we see that the forecast aligns nearly 95% of the data which shows it is an accurate model. 
+
+```{r}
+tmp_f = forecast(tmp)
+attributes(tmp_f)
+```
+Class has changed to forecast method 
+
+
+```{r}
+plot(tmp_f$residuals)
+```
+We see there is a larger margin of error as time grows which tells that potentially the time holds more uncertainty producing more unpredictable behavior.
+```{r}
+hist(tmp_f$residuals)
+```
+```{r}
+Acf(tmp_f$residuals)
+```
+```{r}
+accuracy(tmp_f)
+```
+Looking at the Root Mean Squared Error (RMSE), the value is 0.041, which is really a low number. This tells that the predicted values are not that different from the fitted values and has a low margin of error. This also suggests that the predicted model will provide a good approximation values. 
+
+I took the entire TS because I wanted to ensure that the model was fitted throughout the entire time frame. It gave better insights as to how the residuals varied as time progressed. From the residual plot, the magnitude of error was really low but with year changes, the magnitude was growing which sends the message that there might be some factor that every year is constantly changing that is potentially affecting this error perhaps more consumer base causing a larger expenditures or technology enhancements growing.  
+ 
